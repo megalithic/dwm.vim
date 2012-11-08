@@ -145,7 +145,7 @@ endfunction
 nnoremap <silent> <Plug>DWMRotateCounterclockwise :call DWM_Rotate(0)<CR>
 nnoremap <silent> <Plug>DWMRotateClockwise        :call DWM_Rotate(1)<CR>
 
-nnoremap <silent> <Plug>DWMNew   :call DWM_New()<CR>
+nnoremap <silent> <Plug>DWMNew   :call DWM_New()<CR> :edit <C-d>
 nnoremap <silent> <Plug>DWMClose :exec DWM_Close()<CR>
 nnoremap <silent> <Plug>DWMFocus :call DWM_Focus()<CR>
 
@@ -163,7 +163,7 @@ if g:dwm_map_keys
   nmap <C-,> <Plug>DWMRotateCounterclockwise
   nmap <C-.> <Plug>DWMRotateClockwise
 
-  nmap <C-N> <Plug>DWMNew:edit <c-d>
+  nmap <C-n> <Plug>DWMNew<CR> :edit <C-d>
   nmap <C-C> <Plug>DWMClose
   nmap <C-@> <Plug>DWMFocus
   nmap <C-Space> <Plug>DWMFocus
