@@ -168,6 +168,6 @@ if g:dwm_map_keys
   nmap <C-@> <Plug>DWMFocus
   nmap <C-Space> <Plug>DWMFocus
 
-  " nmap <leader>l <Plug>DWMGrowMaster
-  " nmap <leader>h <Plug>DWMShrinkMaster
+  nmap <leader>l <Plug>DWMGrowMaster
+  nmap <leader>h <Plug>DWMShrinkMaster
 endif
