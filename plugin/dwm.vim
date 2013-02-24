@@ -24,7 +24,7 @@ if exists("g:dwm_version") || &cp
   finish
 endif
 
-let g:dwm_version = "0.1.1"
+let g:dwm_version = "0.1.2"
 
 " Check for Vim version 700 or greater {{{1
 if v:version < 700
@@ -160,14 +160,38 @@ if g:dwm_map_keys
   nnoremap <C-j> <C-W>w
   nnoremap <C-k> <C-W>W
 
-  nmap <C-,> <Plug>DWMRotateCounterclockwise
-  nmap <C-.> <Plug>DWMRotateClockwise
+  if !hasmapto('<Plug>DWMRotateCounterclockwise')
+      nmap <C-,> <Plug>DWMRotateCounterclockwise
+  endif
+  if !hasmapto('<Plug>DWMRotateClockwise')
+      nmap <C-.> <Plug>DWMRotateClockwise
+  endif
 
-  nmap <C-n> <Plug>DWMNew
-  nmap <C-C> <Plug>DWMClose
-  nmap <C-@> <Plug>DWMFocus
-  nmap <C-Space> <Plug>DWMFocus
+" <<<<<<< HEAD
+"   nmap <C-n> <Plug>DWMNew
+"   nmap <C-C> <Plug>DWMClose
+"   nmap <C-@> <Plug>DWMFocus
+"   nmap <C-Space> <Plug>DWMFocus
 
-  nmap <leader>l <Plug>DWMGrowMaster
-  nmap <leader>h <Plug>DWMShrinkMaster
+"   nmap <leader>l <Plug>DWMGrowMaster
+"   nmap <leader>h <Plug>DWMShrinkMaster
+" =======
+  if !hasmapto('<Plug>DWMNew')
+      nmap <C-N> <Plug>DWMNew
+  endif
+  if !hasmapto('<Plug>DWMClose')
+      nmap <C-C> <Plug>DWMClose
+  endif
+  if !hasmapto('<Plug>DWMFocus')
+      nmap <C-@> <Plug>DWMFocus
+      nmap <C-Space> <Plug>DWMFocus
+  endif
+
+  if !hasmapto('<Plug>DWMGrowMaster')
+      nmap <C-L> <Plug>DWMGrowMaster
+  endif
+  if !hasmapto('<Plug>DWMShrinkMaster')
+      nmap <C-H> <Plug>DWMShrinkMaster
+  endif
+" >>>>>>> upstream/master
 endif
