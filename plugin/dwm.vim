@@ -151,6 +151,7 @@ nnoremap <silent> <Plug>DWMFocus :call DWM_Focus()<CR>
 
 nnoremap <silent> <Plug>DWMGrowMaster   :call DWM_GrowMaster()<CR>
 nnoremap <silent> <Plug>DWMShrinkMaster :call DWM_ShrinkMaster()<CR>
+nnoremap <silent> <Plug>DWMResizeMaster :call DWM_ResizeMasterPaneWidth()<CR>
 
 if !exists('g:dwm_map_keys')
   let g:dwm_map_keys = 1
@@ -167,15 +168,6 @@ if g:dwm_map_keys
       nmap <C-.> <Plug>DWMRotateClockwise
   endif
 
-" <<<<<<< HEAD
-"   nmap <C-n> <Plug>DWMNew
-"   nmap <C-C> <Plug>DWMClose
-"   nmap <C-@> <Plug>DWMFocus
-"   nmap <C-Space> <Plug>DWMFocus
-
-"   nmap <leader>l <Plug>DWMGrowMaster
-"   nmap <leader>h <Plug>DWMShrinkMaster
-" =======
   if !hasmapto('<Plug>DWMNew')
       nmap <C-N> <Plug>DWMNew
   endif
@@ -193,5 +185,7 @@ if g:dwm_map_keys
   if !hasmapto('<Plug>DWMShrinkMaster')
       nmap <C-H> <Plug>DWMShrinkMaster
   endif
-" >>>>>>> upstream/master
+  if !hasmapto('<Plug>DWMResizeMaster')
+      nmap <C-=> <Plug>DWMResizeMaster
+  endif
 endif
