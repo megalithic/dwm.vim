@@ -24,7 +24,7 @@ if exists("g:dwm_version") || &cp
   finish
 endif
 
-let g:dwm_version = "0.1.1"
+let g:dwm_version = "0.1.2"
 
 " Check for Vim version 700 or greater {{{1
 if v:version < 700
@@ -44,14 +44,27 @@ endif
 
 " Move the current master pane to the stack
 function! DWM_Stack(clockwise)
-  1wincmd w
-  if a:clockwise
-    " Move to the top of the stack
-    wincmd K
-  else
-    " Move to the bottom of the stack
+  " Get the number of the current window so we can come back here
+  let l:curwin=winnr()
+  " Cycle through all the windows, putting each one at the bottom
+  let l:i=1
+  while l:i <= winnr('$')
+    1wincmd w
     wincmd J
-  endif
+    let l:i += 1
+  endwhile
+  " Return to the window we started in
+  exec l:curwin . "wincmd w"
+
+  " 1wincmd w
+  " if a:clockwise
+  "   " Move to the top of the stack
+  "   wincmd K
+  " else
+  "   " Move to the bottom of the stack
+  "   wincmd J
+  " endif
+  
   " At this point, the layout *should* be the following with the previous master
   " at the top.
   " +-----------------+
@@ -65,42 +78,12 @@ function! DWM_Stack(clockwise)
   " +-----------------+
 endfunction
 
-" Cleans up the window layout
-function! DWM_Fix()
-    wincmd H
-    let l:w = 1
-    " stack all windows
-    while (l:w <= winnr("$"))
-        1wincmd w
-        wincmd J
-        let l:w += 1
-    endwhile
-    1wincmd w
-    wincmd H
-    " resize according to user preference
-    call DWM_ResizeMasterPaneWidth()
-endfunction
-
-" Split the current window, and put the new split on the stack
-function! DWM_Split()
-    let wnr = winnr()
-    call DWM_Stack(1)
-    sb
-    wincmd j
-    let w:dwm = 1
-    wincmd k
-    1wincmd w
-    wincmd H
-    exe wnr.'wincmd w'
-endfunction
-
 " Add a new buffer
 function! DWM_New()
   " Move current master pane to the stack
   call DWM_Stack(1)
   " Create a vertical split
   vert topleft new
-  let w:dwm = 1
   call DWM_ResizeMasterPaneWidth()
 endfunction
 
@@ -116,18 +99,12 @@ endfunction
 
 " Close the current window
 function! DWM_Close()
-  if exists('w:dwm')
-      unlet w:dwm
-  endif
   if winnr() == 1
     " Close master panel.
     return 'close | wincmd H | call DWM_ResizeMasterPaneWidth()'
   else
     return 'close'
   end
-  if len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) == 1 
-    wincmd :q
-  endif
 endfunction
 
 function! DWM_ResizeMasterPaneWidth()
@@ -147,6 +124,11 @@ function! DWM_GrowMaster()
   else
     exec "vertical resize -1"
   endif
+  if exists("g:dwm_master_pane_width") && g:dwm_master_pane_width
+    let g:dwm_master_pane_width += 1
+  else
+    let g:dwm_master_pane_width = ((&columns)/2)+1
+  endif
 endfunction
 
 function! DWM_ShrinkMaster()
@@ -154,6 +136,11 @@ function! DWM_ShrinkMaster()
     exec "vertical resize -1"
   else
     exec "vertical resize +1"
+  endif
+  if exists("g:dwm_master_pane_width") && g:dwm_master_pane_width
+    let g:dwm_master_pane_width -= 1
+  else
+    let g:dwm_master_pane_width = ((&columns)/2)-1
   endif
 endfunction
 
@@ -168,31 +155,50 @@ function! DWM_Rotate(clockwise)
   call DWM_ResizeMasterPaneWidth()
 endfunction
 
-if !exists('g:dwm_auto_arrange')
-    let g:dwm_auto_arrange = 1
-endif
+nnoremap <silent> <Plug>DWMRotateCounterclockwise :call DWM_Rotate(0)<CR>
+nnoremap <silent> <Plug>DWMRotateClockwise        :call DWM_Rotate(1)<CR>
 
-if g:dwm_auto_arrange
-    au BufWinLeave * if exists("w:dwm")  | silent call DWM_Fix() | endif
-    au FileType qf wincmd J
-endif
+nnoremap <silent> <Plug>DWMNew   :call DWM_New()<CR>
+nnoremap <silent> <Plug>DWMClose :exec DWM_Close()<CR>
+nnoremap <silent> <Plug>DWMFocus :call DWM_Focus()<CR>
+
+nnoremap <silent> <Plug>DWMGrowMaster   :call DWM_GrowMaster()<CR>
+nnoremap <silent> <Plug>DWMShrinkMaster :call DWM_ShrinkMaster()<CR>
+nnoremap <silent> <Plug>DWMResizeMaster :call DWM_ResizeMasterPaneWidth()<CR>
 
 if !exists('g:dwm_map_keys')
   let g:dwm_map_keys = 1
 endif
 
 if g:dwm_map_keys
-  nnoremap <silent> <C-J> <C-W>w
-  nnoremap <silent> <C-K> <C-W>W
-  nnoremap <silent> <C-,> :call DWM_Rotate(0)<CR>
-  nnoremap <silent> <C-.> :call DWM_Rotate(1)<CR>
+  nnoremap <C-j> <C-W>w
+  nnoremap <C-k> <C-W>W
 
-  nnoremap <silent> <C-N> :call DWM_New()<CR>
-  nnoremap <silent> <C-C> :exec DWM_Close()<CR>
-  nnoremap <silent> <C-Space> :call DWM_Focus()<CR>
-  nnoremap <silent> <C-@> :call DWM_Focus()<CR>
+  if !hasmapto('<Plug>DWMRotateCounterclockwise')
+      nmap <C-,> <Plug>DWMRotateCounterclockwise
+  endif
+  if !hasmapto('<Plug>DWMRotateClockwise')
+      nmap <C-.> <Plug>DWMRotateClockwise
+  endif
 
-  nnoremap <silent> <C-L> :call DWM_GrowMaster()<CR>
-  nnoremap <silent> <C-H> :call DWM_ShrinkMaster()<CR>
+  if !hasmapto('<Plug>DWMNew')
+      nmap <C-N> <Plug>DWMNew
+  endif
+  if !hasmapto('<Plug>DWMClose')
+      nmap <C-C> <Plug>DWMClose
+  endif
+  if !hasmapto('<Plug>DWMFocus')
+      nmap <C-@> <Plug>DWMFocus
+      nmap <C-Space> <Plug>DWMFocus
+  endif
+
+  if !hasmapto('<Plug>DWMGrowMaster')
+      nmap <C-L> <Plug>DWMGrowMaster
+  endif
+  if !hasmapto('<Plug>DWMShrinkMaster')
+      nmap <C-H> <Plug>DWMShrinkMaster
+  endif
+  if !hasmapto('<Plug>DWMResizeMaster')
+      nmap <C-=> <Plug>DWMResizeMaster
+  endif
 endif
-
