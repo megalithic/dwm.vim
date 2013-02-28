@@ -126,7 +126,8 @@ function! DWM_Close()
     return 'close'
   end
   if len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) == 1 
-    :q
+    echo "i'm all up in this mug trying to :q"
+    wincmd :q<cr>
   endif
 endfunction
 
