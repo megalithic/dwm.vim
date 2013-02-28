@@ -126,7 +126,7 @@ function! DWM_Close()
     return 'close'
   end
   if len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) == 1 
-    wincmd :q
+    :q
   endif
 endfunction
 
