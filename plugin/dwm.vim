@@ -44,14 +44,27 @@ endif
 
 " Move the current master pane to the stack
 function! DWM_Stack(clockwise)
-  1wincmd w
-  if a:clockwise
-    " Move to the top of the stack
-    wincmd K
-  else
-    " Move to the bottom of the stack
+  " Get the number of the current window so we can come back here
+  let l:curwin=winnr()
+  " Cycle through all the windows, putting each one at the bottom
+  let l:i=1
+  while l:i <= winnr('$')
+    1wincmd w
     wincmd J
-  endif
+    let l:i += 1
+  endwhile
+  " Return to the window we started in
+  exec l:curwin . "wincmd w"
+
+  " 1wincmd w
+  " if a:clockwise
+  "   " Move to the top of the stack
+  "   wincmd K
+  " else
+  "   " Move to the bottom of the stack
+  "   wincmd J
+  " endif
+  
   " At this point, the layout *should* be the following with the previous master
   " at the top.
   " +-----------------+
