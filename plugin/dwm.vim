@@ -125,10 +125,6 @@ function! DWM_Close()
   else
     return 'close'
   end
-  if len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) == 1 
-    echo "i'm all up in this mug trying to :q"
-    wincmd :q<cr>
-  endif
 endfunction
 
 function! DWM_ResizeMasterPaneWidth()
