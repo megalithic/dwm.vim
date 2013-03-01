@@ -123,7 +123,7 @@ function! DWM_Close()
     " Close master panel.
     return 'close | wincmd H | call DWM_ResizeMasterPaneWidth()'
   else
-    return 'q'
+    return 'close'
   end
 endfunction
 
